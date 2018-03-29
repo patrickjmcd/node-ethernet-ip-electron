@@ -1,16 +1,36 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import { HashRouter as Router, Route } from "react-router-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import createIpc, { send } from 'redux-electron-ipc';
 
-import App from "./components/App";
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
+import reducers from './reducers';
+
+import TagsIndex from './components/TagsIndex';
+import Settings from './components/Settings';
+import Header from './components/Header';
+
+import { ipcTagUpdate, ipcPlcDetailsReceived } from './actions';
+
+const ipc = createIpc({
+  'tag:valueupdate': ipcTagUpdate,
+  'plc:connected': ipcPlcDetailsReceived
+})
+
+const createStoreWithMiddleware = applyMiddleware(ipc)(createStore);
 
 ReactDOM.render(
-  <Router>
-    <Route
-      component={() => (
-        <App />
-      )}
-    />
-  </Router>,
-  document.getElementById("app")
-);
+  <Provider store={createStoreWithMiddleware(reducers)}>
+    <BrowserRouter>
+      <div>
+        <Header />
+        <Switch>
+          <Route path="/settings" component={Settings} />
+          <Route path="/" component={TagsIndex} />
+        </Switch>
+      </div>
+    </BrowserRouter>
+  </Provider>
+  , document.querySelector('#container'));

@@ -1,45 +1,29 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 import _ from 'lodash';
+import { setPlcIpAddress, storeNewTag, ipcPlcInitializeSend, deleteTag } from '../actions';
 
 class Settings extends Component {
-  constructor(props) {
+  constructor(props){
     super(props);
 
     this.state = {
-      ipAddress: this.props.ipAddress,
-      tagList: this.props.tagList,
+      ipAddress: '',
       newTag: ''
-    };
-    this.getTagList = this.getTagList.bind(this);
-    this.addNewTag =this.addNewTag.bind(this);
+    }
   }
 
-  onSubmit = e => {
-    e.preventDefault();
-    this.props.handleSubmit(this.state);
-  };
-
-  buttonStyle = () => {
-    const { ipAddress, tagList } = this.state;
-    const propsIPAddress = this.props.ipAddress;
-    const propsTagList = this.props.tagList;
-
-    if (ipAddress == propsIPAddress && tagList == propsTagList) {
-      // double equals to avoid type check
-      return "btn";// disabled";
-    }
-
-    return "btn";
-  };
-
   getTagList = () => {
-    const { tagList } = this.state;
+    const { tags } = this.props;
 
-
-    let tableMiddle = _.map(tagList, (tag) => {
-        return (<tr key={tag.id}>
-          <td>{tag.tag}</td>
-          <td><button className="btn red"><i className="material-icons" onClick={e => this.removeTag(e, tag.id)}>clear</i></button></td>
+    let tableMiddle = _.map(tags, (tag) => {
+        return (<tr key={tag.name}>
+          <td>{tag.name}</td>
+          <td>
+            <button
+              className="btn red"
+              onClick={(e) => this.onDeleteClick(e, tag.name)}
+              ><i className="material-icons">clear</i></button></td>
         </tr>)
       });
 
@@ -58,64 +42,92 @@ class Settings extends Component {
       )
   }
 
-  removeTag = (e, id) => {
-    const { tagList } = this.state;
-    const oldTag = _.remove(tagList, (tag) => {
-      return parseInt(tag.id) === parseInt(id)
-    })
-
+  componentWillMount(){
+    if (this.props.plc && this.props.plc.ipAddress){
+      console.log(this.props.plc.ipAddress);
+      this.setState({ipAddress: this.props.plc.ipAddress});
+    }
   }
 
-  addNewTag = (e) => {
+  onDeleteClick = (e, tagName) => {
     e.preventDefault();
-    let { tagList } = this.state;
-    const maxId = Math.max.apply(null, tagList.map( (t) => {
-      return t.id
-    }));
+    this.props.deleteTag(tagName);
+  }
 
-    tagList.push({
-      id: parseInt(maxId) + 1,
-      tag: this.state.newTag,
-      value: null
-    })
-    this.setState({ tagList, newTag: ''});
+  onIpAddressInputChange = (event) =>{
+    this.setState({ipAddress: event.target.value});
+  }
+
+  sendIpAddress(e){
+    e.preventDefault();
+    this.props.setPlcIpAddress(this.state.ipAddress);
+  }
+
+  onNewTagChange = (e) => {
+    this.setState({newTag: e.target.value});
+  }
+
+  onNewTagSubmit = (e) => {
+    e.preventDefault();
+    this.props.storeNewTag(this.state.newTag);
+    this.setState({newTag: ''});
+  }
+
+  onSave = (e) => {
+    console.log(this.props);
+    e.preventDefault();
+    this.props.ipcPlcInitializeSend(this.props.plc.ipAddress, this.props.tags)
+    this.props.history.push('/')
   }
 
   render() {
+    const ipAddressBtnClass = ((this.state.ipAddress === this.props.plc.ipAddress) || (this.state.ipAddress.length === 0)) ? "btn disabled right" : "btn right";
+    const initializeBtnClass = (this.props.plc.ipAddress && _.map(this.props.tags, (t)=>t).length > 0) ? 'btn' : 'btn disabled';
+
     return (
       <div style={styles.container}>
         <ul className="collection with-header">
           <li className="collection-header">
             Settings
           </li>
-          <form onSubmit={this.onSubmit}>
+          <form>
             <li className="collection-item">
               <p>IP Address</p>
               <input
                 value={this.state.ipAddress}
-                onChange={e => this.setState({ ipAddress: e.target.value })}
+                placeholder="PLC IP Address"
+                onChange={this.onIpAddressInputChange}
               />
+              <button
+                className={ipAddressBtnClass}
+                onClick={(e) => this.sendIpAddress(e)}>
+                Set IP Address
+              </button>
             </li>
+          </form>
+
+          <form>
             <li className="collection-item">
-              <p>Tag List</p>
+              <h4>Tag List</h4>
               {this.getTagList()}
               <input
                 value={this.state.newTag}
-                onChange={e => this.setState({ newTag: e.target.value })}
+                onChange={this.onNewTagChange}
+                placeholder="New Tag Name..."
               />
               <button
-                onClick={e => this.addNewTag(e)}
                 className="btn"
+                onClick={(e) => this.onNewTagSubmit(e)}
                 >Add Tag</button>
             </li>
             <li className="collection-item right">
-              <button type="submit" className={this.buttonStyle()}>Save</button>
+              <button
+                className={initializeBtnClass}
+                onClick={(e) => this.onSave(e)}
+                >Save</button>
             </li>
           </form>
         </ul>
-        <button className="btn red" onClick={this.props.handleDataReset}>
-          Reset Data
-        </button>
       </div>
     );
   }
@@ -131,4 +143,19 @@ const styles = {
   }
 };
 
-export default Settings;
+function validate(values){
+  const errors = {};
+  if(!values.ipAddress){
+    errors.ipAddress = "Please enter an IP Address";
+  }
+  return errors;
+}
+
+function mapStateToProps(state){
+  return{
+    tags: state.tags,
+    plc: state.plc
+  }
+}
+
+export default connect(mapStateToProps, { setPlcIpAddress, storeNewTag, ipcPlcInitializeSend, deleteTag })(Settings);

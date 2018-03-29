@@ -27,12 +27,15 @@
     "webpack-cli": "^2.0.11"
   },
   "dependencies": {
-    "ethernet-ip": "^1.1.0",
+    "ethernet-ip": "^1.1.2",
     "lodash": "^4.17.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
-    "react-svg-gauge": "^1.0.7"
+    "react-svg-gauge": "^1.0.7",
+    "redux": "^3.7.2",
+    "redux-electron-ipc": "^1.1.12"
   }
 }

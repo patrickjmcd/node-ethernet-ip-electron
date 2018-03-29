@@ -1,50 +1,51 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
-import { ipcRenderer } from 'electron';
 import _ from 'lodash';
 import Gauge from 'react-svg-gauge';
 
+import { ipcTagSync } from '../actions';
+
 class TagsIndex extends Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      ipAddress: this.props.ipAddress,
-      tagList: this.props.tagList
-    };
-    this.updateValues = this.updateValues.bind(this);
+  renderTagsList(){
+    return _.map(this.props.tags, (t) => {
+      return (<tr key={t.name}>
+        <td>{t.name}</td>
+        <td>{Math.round(t.value * 100) / 100}</td>
+      </tr>);
+    });
   }
 
-  updateValues = (event, data) => {
-    const { tagList } = this.state;
-    _.forEach(tagList, (tag, key) => {
-      if (tag.tag === data.state.tag.name){
-        tag.value = data.state.tag.value;
-        tag.average = tag.count > 0 ? tag.average * ((tag.count - 1) / tag.count) + tag.value / tag.count : tag.value;
-        tag.count++;
-        tag.max = _.max([tag.value, tag.max]);
-        tag.min = _.min([tag.value, tag.min]);
-        tagList[key] = tag;
-      }
+  renderTagsGauges(){
+    return _.map(this.props.tags, (tag) => {
+      return (<div className="col s4" key={tag.name}>
+        <Gauge value={Math.round(tag.value * 100) / 100}
+          width={200}
+          height={150}
+          label={tag.name}
+          valueLabelStyle={styles.valueLabel}
+          topLabelStyle={styles.topLabel}
+          minMaxLabelStyle={styles.minMaxLabel} />
+      </div>)
     })
-    this.setState({tagList});
   }
-
-  componentDidMount (){
-    ipcRenderer.on('tag:valueupdate', this.updateValues)
-  }
-
-  componentWillUnmount() {
-   ipcRenderer.removeListener('tag:valueupdate', this.updateValues)
- }
-
 
   render() {
-    const { ipAddress, tagList } = this.state;
+    let PLC = "PLC";
+    if (this.props.plc.details){
+      PLC = this.props.plc.details.name;
+    }
 
-    if (tagList.length === 0) {
+    if (!this.props.tags || _.map(this.props.tags, (t)=> t ).length === 0) {
       return (
         <div style={styles.container}>
+          {/* <button
+            className="btn teal lighten-2"
+            onClick={this.props.ipcTagSync}
+            >
+          Sync Tags
+          </button> */}
           <h3>
             No Tags.
           </h3>
@@ -53,30 +54,18 @@ class TagsIndex extends Component {
       );
     }
 
-    const tagTableInner = _.map(tagList, (t) => {
-      return (<tr key={t.id}>
-        <td><Link to={"/tags/" + t.id}>{t.tag}</Link></td>
-        <td>{Math.round(t.value * 100) / 100}</td>
-      </tr>);
-    });
-
     return (
       <div style={styles.container}>
-        <h2>Tags for {ipAddress}</h2>
+        {/* <button
+          className="btn teal lighten-2"
+          onClick={()=> this.props.ipcTagSync(this.props.tags)}
+          >
+        Sync Tags
+        </button> */}
+        <h2>Tags for {this.props.plc.ipAddress}</h2>
+        <h3>{PLC}</h3>
         <div className="row">
-            {
-              _.map(tagList, (tag) => {
-                return (<div className="col s4" key={tag.id}>
-                  <Gauge value={Math.round(tag.value * 100) / 100}
-                    width={200}
-                    height={150}
-                    label={tag.tag}
-                    valueLabelStyle={styles.valueLabel}
-                    topLabelStyle={styles.topLabel}
-                    minMaxLabelStyle={styles.minMaxLabel} />
-                </div>)
-              })
-            }
+            {this.renderTagsGauges()}
         </div>
 
         <table>
@@ -87,7 +76,7 @@ class TagsIndex extends Component {
             </tr>
           </thead>
           <tbody>
-          { tagTableInner }
+          { this.renderTagsList()}
         </tbody>
       </table>
       </div>
@@ -121,4 +110,11 @@ const styles = {
   }
 };
 
-export default TagsIndex;
+function mapStateToProps(state){
+  return {
+    tags: state.tags,
+    plc: state.plc
+   }
+}
+
+export default connect(mapStateToProps, { ipcTagSync })(TagsIndex);
