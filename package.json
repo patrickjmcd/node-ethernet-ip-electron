@@ -1,24 +1,27 @@
 {
-  "name": "electron-react-webpack",
+  "name": "node-ethernet-ip-electron",
   "version": "1.0.0",
-  "description": "Electron + React 16 + Webpack 4 template.",
+  "description": "PLC Tag Monitor",
   "main": "main_process.js",
   "scripts": {
     "bundle": "webpack --mode development",
     "serve": "electron .",
-    "start": "npm-run-all --parallel bundle serve"
+    "start": "npm-run-all --parallel bundle serve",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder -mwl"
   },
-  "author": "J. Renato Ramos González <renato.etc.etc.etc@gmail.com>",
-  "repository": "pastahito/electron-react-webpack",
-  "license": "WTFPL",
+  "author": "Patrick J. McDonagh",
+  "repository": "patrickjmcd/node-ethernet-ip-electron",
+  "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
-    "babel-preset-react": "^6.24.1",
     "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.10",
     "electron": "^2.0.0-beta.5",
+    "electron-builder": "^20.8.1",
     "electron-reload": "^1.2.2",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^1.1.10",
@@ -37,5 +40,14 @@
     "react-svg-gauge": "^1.0.7",
     "redux": "^3.7.2",
     "redux-electron-ipc": "^1.1.12"
+  },
+  "build": {
+    "appId": "com.patrickjmcd.enip",
+    "mac": {
+      "target": "default"
+    },
+    "win": {
+      "target": "portable"
+    }
   }
 }
