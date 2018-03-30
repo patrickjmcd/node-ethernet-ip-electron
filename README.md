@@ -2,7 +2,7 @@
 
 A basic electron app to read values from a PLC.
 
-![mainWindow](mainWindow.png)
+![mainWindow](readingTag.gif)
 
 ## Install
 ``` bash
