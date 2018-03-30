@@ -1,6 +1,6 @@
 {
   "name": "node-ethernet-ip-electron",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "PLC Tag Monitor",
   "main": "main_process.js",
   "scripts": {
@@ -30,7 +30,7 @@
     "webpack-cli": "^2.0.11"
   },
   "dependencies": {
-    "ethernet-ip": "^1.1.2",
+    "ethernet-ip": "^1.1.4",
     "lodash": "^4.17.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
