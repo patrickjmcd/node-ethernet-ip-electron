@@ -1,57 +1,59 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
 
-    watch: true,
+	watch: false,
+	target: "electron-main",
+	entry: ["./app/src/renderer_process.js", "./app/src/global.css"],
+	output: {
+		path: __dirname + "/app/build",
+		publicPath: "build/",
+		filename: "bundle.js"
+	},
 
-    target: 'electron-main',
+	module: {
+		rules: [
+			{
+				test: /\.jsx?$/,
+				loader: "babel-loader",
+				options: {
+					presets: [ "es2015", "react", "stage-0" ]
+				}
+			},
+			// {
+			// 	test: /\.css$/,
+			// 	loader: ExtractTextPlugin.extract({
+			// 		loader: "css-loader",
+			// 		options: {
+			// 			modules: true
+			// 		}
+			// 	})
+			// },
+			{
+				test: /\.css$/,
+				use: [
+					MiniCssExtractPlugin.loader,
+					"css-loader"
+				]
+			},
+			{
+				test: /\.(png|jpg|gif|svg)$/,
+				loader: "file-loader",
+				query: {
+					name: "[name].[ext]?[hash]"
+				}
+			}
+		]
+	},
 
-    entry: './app/src/renderer_process.js',
+	plugins: [
+		new MiniCssExtractPlugin({
+			filename: "main.css",
+			chunkFilename: "[id].css"
+		  })
+	],
 
-    output: {
-        path: __dirname + '/app/build',
-        publicPath: 'build/',
-        filename: 'bundle.js'
-    },
+	resolve: {
+		extensions: [".js", ".json", ".jsx"]
+	}
 
-    module: {
-        rules: [
-            {
-                test: /\.jsx?$/,
-                loader: 'babel-loader',
-                options: {
-                    presets: [ 'es2015', 'react', 'stage-0' ]
-                }
-            },
-            {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract({
-                  loader: 'css-loader',
-                  options: {
-                    modules: true
-                  }
-                })
-            },
-            {
-                test: /\.(png|jpg|gif|svg)$/,
-                loader: 'file-loader',
-                query: {
-                    name: '[name].[ext]?[hash]'
-                }
-            }
-        ]
-    },
-
-    plugins: [
-        new ExtractTextPlugin({
-            filename: 'bundle.css',
-            disable: false,
-            allChunks: true
-        })
-    ],
-
-    resolve: {
-      extensions: ['.js', '.json', '.jsx']
-    }
-
-}
+};
