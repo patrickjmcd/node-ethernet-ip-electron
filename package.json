@@ -1,6 +1,6 @@
 {
   "name": "node-ethernet-ip-electron",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "PLC Tag Monitor",
   "main": "main_process.js",
   "scripts": {
@@ -15,6 +15,7 @@
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",

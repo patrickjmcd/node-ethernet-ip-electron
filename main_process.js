@@ -14,6 +14,14 @@ app.on("ready", () => {
 	mainWindow.loadURL(`file://${__dirname}/app/index.html`);
 });
 
+function writeTag(tagName, tagValue){
+	const thisTag = new Tag(tagName);
+	PLC.readTag(thisTag).then(() => {
+		thisTag.value = tagValue;
+		PLC.writeTag(thisTag);
+	});
+}
+
 function initPLC(ipAddress, tagList){
 	PLC = new Controller();
 
@@ -55,5 +63,6 @@ ipcMain.on("plc:initialize", (event, ipAddress, tagList) =>{
 
 ipcMain.on("tag:write", (event, tagName, value) => {
 	console.log("tag:write", tagName, value);
+	writeTag(tagName, value);
 });
 

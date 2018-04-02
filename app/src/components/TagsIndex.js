@@ -11,7 +11,7 @@ class TagsIndex extends Component {
 
 	constructor(props){
 		super(props);
-		this.state = {};
+		this.state = {writes: {}};
 	}
 
 	renderTagsList(){
@@ -21,7 +21,7 @@ class TagsIndex extends Component {
 				<td>{Math.round(t.value * 100) / 100}</td>
 				<td><input 
 					onChange={(e) => this.onTagWriteFieldChanged(e, t.name)}
-					/></td>
+				/></td>
 				<td><button 
 					className="waves-effect waves-light btn"
 					onClick={() => this.onWriteButtonClick(t.name)}
@@ -45,11 +45,13 @@ class TagsIndex extends Component {
 	}
 
 	onWriteButtonClick = (tagName) => {
-		console.log(tagName);
+		console.log(tagName, this.state.writes[tagName]);
+		this.props.writeTag(tagName, this.state.writes[tagName]);
 	}
 
 	onTagWriteFieldChanged = (e, tagName) => {
 		console.log(tagName, e.target.value);
+		this.setState({writes: {...this.state.writes, [tagName]: e.target.value}});
 	}
 
 	render() {
