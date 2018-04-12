@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import _ from "lodash";
 import { setPlcIpAddress, storeNewTag, ipcPlcInitializeSend, deleteTag } from "../actions";
 
-class Settings extends Component {
+export class Settings extends Component {
 	constructor(props){
 		super(props);
 
@@ -21,7 +21,7 @@ class Settings extends Component {
 				<td>{tag.name}</td>
 				<td>
 					<button
-						className="btn red"
+						className="btn red delete-button"
 						onClick={(e) => this.onDeleteClick(e, tag.name)}
 					><i className="material-icons">clear</i></button></td>
 			</tr>);
@@ -44,7 +44,6 @@ class Settings extends Component {
 
 	componentWillMount(){
 		if (this.props.plc && this.props.plc.ipAddress){
-			console.log(this.props.plc.ipAddress);
 			this.setState({ipAddress: this.props.plc.ipAddress});
 		}
 	}
@@ -74,7 +73,6 @@ class Settings extends Component {
 	}
 
 	onSave = (e) => {
-		console.log(this.props);
 		e.preventDefault();
 		this.props.ipcPlcInitializeSend(this.props.plc.ipAddress, this.props.tags);
 		this.props.history.push("/");
@@ -85,7 +83,7 @@ class Settings extends Component {
 		const initializeBtnClass = (this.props.plc.ipAddress && _.map(this.props.tags, (t)=>t).length > 0) ? "btn" : "btn disabled";
 
 		return (
-			<div style={styles.container}>
+			<div style={styles.container} className="settings">
 				<ul className="collection with-header">
 					<li className="collection-header">
             Settings
@@ -94,12 +92,13 @@ class Settings extends Component {
 						<li className="collection-item">
 							<p>IP Address</p>
 							<input
+								className="ip-address-field"
 								value={this.state.ipAddress}
 								placeholder="PLC IP Address"
 								onChange={this.onIpAddressInputChange}
 							/>
 							<button
-								className={ipAddressBtnClass}
+								className={ipAddressBtnClass + " ip-submit-button"}
 								onClick={(e) => this.sendIpAddress(e)}>
                 Set IP Address
 							</button>
@@ -107,22 +106,23 @@ class Settings extends Component {
 					</form>
 
 					<form>
-						<li className="collection-item">
+						<li className="collection-item tag-list">
 							<h4>Tag List</h4>
 							{this.getTagList()}
 							<input
+								className="tag-name-input"
 								value={this.state.newTag}
 								onChange={this.onNewTagChange}
 								placeholder="New Tag Name..."
 							/>
 							<button
-								className="btn"
+								className="btn add-tag-button"
 								onClick={(e) => this.onNewTagSubmit(e)}
 							>Add Tag</button>
 						</li>
 						<li className="collection-item right">
 							<button
-								className={initializeBtnClass}
+								className={initializeBtnClass + " save-button"}
 								onClick={(e) => this.onSave(e)}
 							>Save</button>
 						</li>

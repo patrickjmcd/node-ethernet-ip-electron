@@ -1,14 +1,5 @@
 import { ipcRenderer } from "electron";
-
-export const IPC_TAGUPDATE = "IPC_TAGUPDATE";
-export const IPC_TAGSYNC = "IPC_TAGSYNC";
-
-export const SET_PLC_IPADDRESS = "SET_PLC_IPADDRESS";
-export const INITIALIZE_PLC = "INITIALIZE_PLC";
-export const PLC_DATA_RECEIVED = "PLC_DATA_RECEIVED";
-export const STORE_NEW_TAG = "STORE_NEW_TAG";
-export const DELETE_TAG = "DELETE_TAG";
-export const WRITE_TAG = "WRITE_TAG";
+import { IPC_TAGUPDATE, IPC_TAGSYNC, SET_PLC_IPADDRESS, INITIALIZE_PLC, PLC_DATA_RECEIVED, STORE_NEW_TAG, DELETE_TAG, WRITE_TAG } from "../actions/types";
 
 export function ipcTagUpdate(event, tag){
 	return {

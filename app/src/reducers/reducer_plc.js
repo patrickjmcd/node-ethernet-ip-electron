@@ -1,6 +1,6 @@
-import { SET_PLC_IPADDRESS, PLC_DATA_RECEIVED } from "../actions";
+import { SET_PLC_IPADDRESS, PLC_DATA_RECEIVED } from "../actions/types";
 
-export default function(state = {}, action){
+const plcReducers = (state={}, action) => {
 	switch(action.type){
 	case SET_PLC_IPADDRESS:
 		return { ...state, ipAddress: action.payload };
@@ -9,6 +9,9 @@ export default function(state = {}, action){
 		return { ...state, details: action.payload };
 
 	default:
-		return state;
+		return {...state};
 	}
-}
+};
+
+export default plcReducers;
+

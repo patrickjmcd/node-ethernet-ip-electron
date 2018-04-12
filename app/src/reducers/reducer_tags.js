@@ -1,12 +1,12 @@
 import _ from "lodash";
-import { IPC_TAGUPDATE, STORE_NEW_TAG, DELETE_TAG } from "../actions";
+import { IPC_TAGUPDATE, STORE_NEW_TAG, DELETE_TAG } from "../actions/types";
 
 
 export default function(state = {}, action){
 	switch (action.type) {
 	case IPC_TAGUPDATE:
 		const { name, value } = action.payload;
-		return { ...state, [name]: { name, value }};
+		return { ...state, [name]: {  name, value }};
 
 	case STORE_NEW_TAG:
 		const newTagName = action.payload;

@@ -7,7 +7,7 @@ import Gauge from "react-svg-gauge";
 import { writeTag } from "../actions";
 
 
-class TagsIndex extends Component {
+export class TagsIndex extends Component {
 
 	constructor(props){
 		super(props);
@@ -19,12 +19,15 @@ class TagsIndex extends Component {
 			return (<tr key={t.name}>
 				<td>{t.name}</td>
 				<td>{Math.round(t.value * 100) / 100}</td>
-				<td><input 
-					onChange={(e) => this.onTagWriteFieldChanged(e, t.name)}
-				/></td>
+				<td>
+					<input 
+						className="tag-write-input"
+						onChange={(e) => this.onTagWriteFieldChanged(e, t.name)}
+					/>
+				</td>
 				<td><button 
-					className="waves-effect waves-light btn"
-					onClick={() => this.onWriteButtonClick(t.name)}
+					className="waves-effect waves-light btn tag-write-button"
+					onClick={(e) => this.onWriteButtonClick(e, t.name)}
 				>Write</button></td>
 			</tr>);
 		});
@@ -32,7 +35,7 @@ class TagsIndex extends Component {
 
 	renderTagsGauges(){
 		return _.map(this.props.tags, (tag) => {
-			return (<div className="col s4" key={tag.name}>
+			return (<div className="col s4 tag-gauge" key={tag.name}>
 				<Gauge value={Math.round(tag.value * 100) / 100}
 					width={200}
 					height={150}
@@ -44,13 +47,12 @@ class TagsIndex extends Component {
 		});
 	}
 
-	onWriteButtonClick = (tagName) => {
-		console.log(tagName, this.state.writes[tagName]);
+	onWriteButtonClick = (event, tagName) => {
+		event.preventDefault();
 		this.props.writeTag(tagName, this.state.writes[tagName]);
 	}
 
 	onTagWriteFieldChanged = (e, tagName) => {
-		console.log(tagName, e.target.value);
 		this.setState({writes: {...this.state.writes, [tagName]: e.target.value}});
 	}
 
@@ -62,7 +64,7 @@ class TagsIndex extends Component {
 
 		if (!this.props.tags || _.map(this.props.tags, (t)=> t ).length === 0) {
 			return (
-				<div style={styles.container}>
+				<div style={styles.container} className="tags-index-notags">
 					<h3>
             No Tags.
 					</h3>
@@ -72,7 +74,7 @@ class TagsIndex extends Component {
 		}
 
 		return (
-			<div style={styles.container}>
+			<div style={styles.container} className="tags-index-withtags">
 				<h2>Tags for {this.props.plc.ipAddress}</h2>
 				<h3>{PLC}</h3>
 				<div className="row">
