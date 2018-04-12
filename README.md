@@ -1,6 +1,7 @@
 # node-ethernet-ip-electron
 
 A basic electron app to read values from a PLC.
+[![Build Status](https://travis-ci.org/patrickjmcd/node-ethernet-ip-electron.svg?branch=master)](https://travis-ci.org/patrickjmcd/node-ethernet-ip-electron)
 
 ![mainWindow](readingTag.gif)
 
