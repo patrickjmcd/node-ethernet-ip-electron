@@ -49,7 +49,7 @@ module.exports = {
 		new MiniCssExtractPlugin({
 			filename: "main.css",
 			chunkFilename: "[id].css"
-		  })
+		})
 	],
 
 	resolve: {

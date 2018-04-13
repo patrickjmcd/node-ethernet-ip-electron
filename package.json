@@ -10,7 +10,8 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder -mwl",
     "test": "jest --verbose --coverage",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "test-ci": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "jest": {
     "transformIgnorePatterns": [
@@ -30,6 +31,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "coveralls": "^3.0.0",
     "css-loader": "^0.28.10",
     "electron": "^2.0.0-beta.5",
     "electron-builder": "^20.8.1",
